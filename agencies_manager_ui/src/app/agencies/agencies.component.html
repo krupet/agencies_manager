@@ -1,0 +1,78 @@
+<h2>{{ title }}</h2>
+
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">Name</th>
+    <th scope="col">Country</th>
+    <th scope="col">Country code</th>
+    <th scope="col">City</th>
+    <th scope="col">Street</th>
+    <th scope="col">Settlement currency</th>
+    <th scope="col">Contact person</th>
+    <th scope="col"></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let agency of agencies; index as i">
+  <tr>
+    <td>{{agency.name}}</td>
+    <td>{{agency.country}}</td>
+    <td>{{agency.countryCode}}</td>
+    <td>{{agency.city}}</td>
+    <td>{{agency.street}}</td>
+    <td>{{agency.settlementCurrency}}</td>
+    <td>{{agency.contactPerson}}</td>
+    <td>
+      <button class="btn btn-primary" (click)="onRemove(agency.name)">Remove</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<button class="btn btn-lg btn-outline-primary" (click)="open(mymodal)">Add agency</button>
+
+<ng-template #mymodal let-modal>
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Bootstrap Modal</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+      <div class="input-group mb-3">
+        <input name="name" type="text" class="form-control" placeholder="Agency name" ngModel/>
+      </div>
+      <div class="input-group mb-3">
+        <input name="country" type="text" class="form-control" placeholder="Country" ngModel/>
+      </div>
+
+      <div class="input-group mb-3">
+        <input name="country" type="text" class="form-control" placeholder="Country code" ngModel/>
+      </div>
+
+      <div class="input-group mb-3">
+        <input name="city" type="text" class="form-control" placeholder="City" ngModel/>
+      </div>
+
+      <div class="input-group mb-3">
+        <input name="street" type="text" class="form-control" placeholder="Street" ngModel/>
+      </div>
+
+      <div class="input-group mb-3">
+        <input name="settlementCurrency" type="text" class="form-control" placeholder="Settlement currency" ngModel/>
+      </div>
+
+      <div class="input-group mb-3">
+        <input name="contactPerson" type="text" class="form-control" placeholder="Contact person" ngModel/>
+      </div>
+
+      <!--      <button data-dismiss="modal" type="button" class="btn btn-outline-dark">Save</button>-->
+      <input class="btn btn-outline-dark" type="submit" value="Send">
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Ok</button>
+  </div>
+</ng-template>
