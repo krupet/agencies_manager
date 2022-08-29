@@ -1,19 +1,35 @@
-export interface AgencyDetails {
-  name: string;
-  country: string;
-  countryCode: string;
-  city: string;
-  street: string;
-  settlementCurrency: string;
-  contactPerson: string;
+import {HttpClient} from "@angular/common/http";
+
+export class AgencyDetails {
+  constructor(
+    public name: string,
+    public country: string,
+    public countryCode: string,
+    public city: string,
+    public street: string,
+    public settlementCurrency: string,
+    public contactPerson: string) {
+  }
 }
 
 export class AgenciesService {
-  remove = (id:string) => {
+
+
+  // constructor(http: HttpClient) {
+    // http.get()
+  // }
+
+  remove = (id: string) => {
     this.agencies = this.agencies.filter(i => i.name !== id);
   }
 
-  getAgencies = () => { return this.agencies }
+  getAgencies = () => {
+    return this.agencies
+  }
+
+  add(agency: AgencyDetails) {
+    this.agencies.push(agency);
+  }
 
   agencies: AgencyDetails[] = [
     {

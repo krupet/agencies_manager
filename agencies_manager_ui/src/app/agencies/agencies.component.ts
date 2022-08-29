@@ -21,11 +21,6 @@ export class AgenciesComponent {
     this.agencies = service.getAgencies()
   }
 
-  onRemove(id: string) {
-    this.service.remove(id);
-    this.agencies = this.service.getAgencies()
-  }
-
   open(content: any) {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       console.log("opened", result)
@@ -47,9 +42,15 @@ export class AgenciesComponent {
     }
   }
 
-  onSubmit(form: NgForm) {
-
-    console.log("submit", form.value);
+  onRemove(id: string) {
+    this.service.remove(id);
+    this.agencies = this.service.getAgencies()
   }
+
+  newAgencyAdded(event:any) {
+    this.agencies = this.service.getAgencies()
+  }
+
+
 
 }

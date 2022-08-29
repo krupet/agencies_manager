@@ -1,0 +1,114 @@
+<form #f="ngForm" (ngSubmit)="submit(f)">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input
+      required
+      ngModel
+      name="name"
+      #name="ngModel"
+      id="name"
+      type="text"
+      class="form-control">
+    <div
+      class="alert alert-danger"
+      *ngIf="name.touched && !name.valid">Name is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="country">Country</label>
+    <input
+      required
+      ngModel
+      #country="ngModel"
+      name="country"
+      id="country"
+      type="text"
+      class="form-control"/>
+    <div
+      class="alert alert-danger"
+      *ngIf="country.touched && !country.valid">Name is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="countryCode">City</label>
+    <input
+      required
+      ngModel
+      #countryCode="ngModel"
+      name="countryCode"
+      id="countryCode"
+      type="text"
+      class="form-control"/>
+    <div
+      class="alert alert-danger"
+      *ngIf="countryCode.touched && !countryCode.valid">Name is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="city">City</label>
+    <input
+      required
+      ngModel
+      #city="ngModel"
+      name="city"
+      id="city"
+      type="text"
+      class="form-control"/>
+    <div
+      class="alert alert-danger"
+      *ngIf="city.touched && !city.valid">Name is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="street">Street</label>
+    <input
+      required
+      ngModel
+      #street="ngModel"
+      name="street"
+      id="street"
+      type="text"
+      class="form-control"/>
+    <div
+      class="alert alert-danger"
+      *ngIf="street.touched && !street.valid">Name is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="settlementCurrency">Settlement currency</label>
+    <input
+      required
+      ngModel
+      #settlementCurrency="ngModel"
+      name="settlementCurrency"
+      id="settlementCurrency"
+      type="text"
+      class="form-control"/>
+    <div
+      class="alert alert-danger"
+      *ngIf="settlementCurrency.touched && !settlementCurrency.valid">Name is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="contactPerson">Contact person</label>
+    <input
+      required
+      ngModel
+      #contactPerson="ngModel"
+      name="contactPerson"
+      id="contactPerson"
+      type="text"
+      class="form-control"/>
+    <div
+      class="alert alert-danger"
+      *ngIf="contactPerson.touched && !contactPerson.valid">Name is required
+    </div>
+  </div>
+  <button class="btn btn-primary" [disabled]="!f.valid" (click)="modal.dismiss('Submitted')">Submit</button>
+</form>
