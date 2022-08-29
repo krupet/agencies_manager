@@ -25,7 +25,8 @@
     <td>{{agency.contactPerson}}</td>
     <td>
       <button class="btn btn-primary" (click)="openEdit(edit_agency_modal, agency)">Edit</button>
-    </td><td>
+    </td>
+    <td>
       <button class="btn btn-primary" (click)="onRemove(agency.name)">Remove</button>
     </td>
   </tr>
@@ -54,7 +55,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="editForm" >
+    <form [formGroup]="editForm">
       <div class="form-group">
         <label for="nameEdit">Name</label>
         <input
@@ -124,7 +125,7 @@
           type="text"
           class="form-control"/>
       </div>
-      <button class="btn btn-primary" (click)="modal.dismiss('Submitted')">Edit</button>
+      <button class="btn btn-primary" (click)="updateAgency();modal.dismiss('Submitted')">Edit</button>
     </form>
   </div>
 </ng-template>

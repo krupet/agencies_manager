@@ -41,6 +41,11 @@ export class AgenciesService {
     this.agencies.push(agency);
   }
 
+  put(agency: AgencyDetails) {
+    console.log("put: ", agency)
+    // this.agencies.push(agency);
+  }
+
   agencies: AgencyDetails[] = [
     {
       name: "Le Chamois",

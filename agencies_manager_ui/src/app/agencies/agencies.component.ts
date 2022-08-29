@@ -67,4 +67,8 @@ export class AgenciesComponent implements OnInit {
   newAgencyAdded(event: any) {
     this.agencies = this.service.getAgencies()
   }
+
+  updateAgency() {
+    this.service.put(this.editForm.value)
+  }
 }
