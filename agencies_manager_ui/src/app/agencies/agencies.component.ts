@@ -1,45 +1,62 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AgenciesService, AgencyDetails} from "./agencies.service";
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
-import {NgForm} from "@angular/forms";
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FormBuilder} from "@angular/forms";
 
 @Component({
   selector: 'agencies',
   templateUrl: './agencies.component.html'
 })
-export class AgenciesComponent {
+export class AgenciesComponent implements OnInit {
 
   title = "List of agencies"
-  closeResult: string = '';
-
+  editForm: any;
   agencies: AgencyDetails[];
 
   constructor(
     private service: AgenciesService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private formBuilder: FormBuilder
   ) {
     this.agencies = service.getAgencies()
   }
 
+  ngOnInit(): void {
+    this.editForm = this.formBuilder.group({
+      name: [''],
+      country: [''],
+      countryCode: [''],
+      city: [''],
+      street: [''],
+      settlementCurrency: [''],
+      contactPerson: ['']
+    })
+  }
+
   open(content: any) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      console.log("opened", result)
-      this.closeResult = `Closed with: ${result}`;
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
     });
   }
 
-  private getDismissReason(reason: any): string {
+  openEdit(content: any, currentAgency: AgencyDetails) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
 
-    console.log("closed");
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return `with: ${reason}`;
-    }
+    this.editForm.patchValue({
+      name: currentAgency.name,
+      country: currentAgency.country,
+      countryCode: currentAgency.countryCode,
+      city: currentAgency.city,
+      street: currentAgency.street,
+      settlementCurrency: currentAgency.settlementCurrency,
+      contactPerson: currentAgency.contactPerson
+    })
   }
 
   onRemove(id: string) {
@@ -47,10 +64,7 @@ export class AgenciesComponent {
     this.agencies = this.service.getAgencies()
   }
 
-  newAgencyAdded(event:any) {
+  newAgencyAdded(event: any) {
     this.agencies = this.service.getAgencies()
   }
-
-
-
 }

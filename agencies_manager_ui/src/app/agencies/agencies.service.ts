@@ -12,6 +12,16 @@ export class AgencyDetails {
   }
 }
 
+export const EmptyAgency = {
+  name: '',
+  country: '',
+  countryCode: '',
+  city: '',
+  street: '',
+  settlementCurrency: '',
+  contactPerson: ''
+};
+
 export class AgenciesService {
 
 
