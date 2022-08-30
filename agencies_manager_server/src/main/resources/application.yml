@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      database: agencies
+      uri: mongodb://a:b@localhost:27017
