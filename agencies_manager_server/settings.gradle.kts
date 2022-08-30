@@ -1,1 +1,1 @@
-rootProject.name = "agencies-manager-ui"
+rootProject.name = "agencies-manager-server"

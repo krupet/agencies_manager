@@ -1,4 +1,4 @@
-package com.krupet.agenciesmanagerui
+package com.krupet.agenciesmanagerserver
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
