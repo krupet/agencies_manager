@@ -29,14 +29,14 @@ class AgencyController(private val agencyService: AgencyService) {
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable("id") agencyId: UUID,
+        @PathVariable("id") agencyId: String,
         @Valid @RequestBody agencyRequest: AgencyRequest
     ): Agency = agencyService.update(
-        agencyRequest.copy(id = agencyId).toEntity(agencyId)
+        agencyRequest.toEntity(agencyId)
     )
 
     @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun delete(@PathVariable("id") agencyId: UUID): String =
+    fun delete(@PathVariable("id") agencyId: String): String =
         // TODO: fix me
         """{ "deletedId" : "${agencyService.delete(agencyId)}" }"""
 

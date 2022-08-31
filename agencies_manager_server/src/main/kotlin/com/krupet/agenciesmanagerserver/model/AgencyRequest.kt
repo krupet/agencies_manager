@@ -1,6 +1,5 @@
 package com.krupet.agenciesmanagerserver.model
 
-import java.util.UUID
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
@@ -13,7 +12,6 @@ const val SETTLEMENT_CURRENCY_NOT_BLANK_VIOLATION_MESSAGE = "Settlement currency
 const val CONTACT_PERSON_NOT_BLANK_VIOLATION_MESSAGE = "Contact person cannot be blank"
 
 data class AgencyRequest(
-    val id: UUID?,
     @field:NotBlank(message = NAME_NOT_BLANK_VIOLATION_MESSAGE)
     val name: String,
     @field:NotBlank(message = COUNTRY_NOT_BLANK_VIOLATION_MESSAGE)
@@ -30,13 +28,13 @@ data class AgencyRequest(
     val contactPerson: String
 )
 
-fun AgencyRequest.toEntity(id: UUID = UUID.randomUUID()): Agency = Agency(
-    id,
-    this.name,
-    this.country,
-    this.countryCode,
-    this.city,
-    this.street,
-    this.settlementCurrency,
-    this.contactPerson
+fun AgencyRequest.toEntity(id: String? = null): Agency = Agency(
+    id = id,
+    name = this.name,
+    country = this.country,
+    countryCode = this.countryCode,
+    city = this.city,
+    street = this.street,
+    settlementCurrency = this.settlementCurrency,
+    contactPerson = this.contactPerson
 )

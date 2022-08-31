@@ -57,7 +57,7 @@ class ValidationChecksTest {
 
 fun Agency.toRequest(): AgencyRequest =
     AgencyRequest(
-        id = this.uuid,
+//        id = this.id,
         name = this.name,
         country = this.country,
         countryCode = this.countryCode,

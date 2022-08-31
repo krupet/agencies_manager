@@ -1,11 +1,10 @@
 package com.krupet.agenciesmanagerserver
 
 import com.krupet.agenciesmanagerserver.model.Agency
-import java.util.UUID
 
-val testAgencyId: UUID = UUID.fromString("4dfcc6ca-28ad-11ed-a261-0242ac120002")
+val testAgencyId: String = "4dfcc6ca-28ad-11ed-a261-0242ac120002"
 val testAgency = Agency(
-    uuid = testAgencyId,
+    id = testAgencyId,
     name = "Le Chamois",
     country = "France",
     countryCode = "FRA",
@@ -16,7 +15,7 @@ val testAgency = Agency(
 )
 val testAgencies = listOf(
     Agency(
-        uuid = UUID.fromString("4dfcc6ca-28ad-11ed-a261-0242ac120002"),
+        id = "4dfcc6ca-28ad-11ed-a261-0242ac120002",
         name = "Convention Tickets",
         country = "United States",
         countryCode = "USA",
@@ -27,7 +26,7 @@ val testAgencies = listOf(
 
     ),
     Agency(
-        uuid = UUID.fromString("b821b4ca-28ad-11ed-a261-0242ac120002"),
+        id = "b821b4ca-28ad-11ed-a261-0242ac120002",
         name = "Porta Nuova Biglietti",
         country = "Italy",
         countryCode = "ITA",
@@ -37,7 +36,7 @@ val testAgencies = listOf(
         contactPerson = "Signore Bruno"
     ),
     Agency(
-        uuid = UUID.fromString("b1ec3b16-28ad-11ed-a261-0242ac120002"),
+        id = "b1ec3b16-28ad-11ed-a261-0242ac120002",
         name = "Tabak und Zeitschriften Hubert",
         country = "Germany",
         countryCode = "DEU",
@@ -47,7 +46,7 @@ val testAgencies = listOf(
         contactPerson = "Herr Hubert"
     ),
     Agency(
-        uuid = UUID.fromString("a4dd5856-28ad-11ed-a261-0242ac120002"),
+        id = "a4dd5856-28ad-11ed-a261-0242ac120002",
         name = "The corner",
         country = "United Kingdom",
         countryCode = "GBR",

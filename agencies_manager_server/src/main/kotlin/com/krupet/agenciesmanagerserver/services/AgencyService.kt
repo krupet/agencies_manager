@@ -8,6 +8,6 @@ import org.springframework.data.domain.Pageable
 interface AgencyService {
     fun create(agency: Agency): Agency
     fun update(agency: Agency): Agency
-    fun delete(agencyId: UUID): UUID
+    fun delete(agencyId: String): String
     fun fetch(pageable: Pageable): Page<Agency>
 }

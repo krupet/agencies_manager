@@ -3,7 +3,6 @@ package com.krupet.agenciesmanagerserver.services
 import com.krupet.agenciesmanagerserver.exceptions.EntityNotFoundException
 import com.krupet.agenciesmanagerserver.model.Agency
 import com.krupet.agenciesmanagerserver.repositories.AgencyRepository
-import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -14,13 +13,14 @@ class AgencyServiceImpl(private val agencyRepository: AgencyRepository) : Agency
         agencyRepository.insert(agency)
 
     override fun update(agency: Agency): Agency {
-        return agencyRepository.findById(agency.uuid)
+        val id = agency.id ?: ""
+        return agencyRepository.findById(id)
             .map { it.copy(agency) }
             .map { agencyRepository.save(it) }
-            .orElseThrow { EntityNotFoundException("Cant find agency by id: {${agency.uuid}}") }
+            .orElseThrow { EntityNotFoundException("Cant find agency by id: {${agency.id}}") }
     }
 
-    override fun delete(agencyId: UUID): UUID {
+    override fun delete(agencyId: String): String {
         agencyRepository.findById(agencyId)
             .orElseThrow { EntityNotFoundException("Cant find agency by id: {$agencyId}") }
         agencyRepository.deleteById(agencyId)
@@ -33,7 +33,7 @@ class AgencyServiceImpl(private val agencyRepository: AgencyRepository) : Agency
 
 fun Agency.copy(other: Agency): Agency =
     this.copy(
-        uuid = other.uuid,
+        id = other.id,
         name = other.name,
         country = other.country,
         countryCode = other.countryCode,
