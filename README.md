@@ -15,3 +15,6 @@ $ docker-compose up
 ```
 
 Then got to [http://localhost:8888/](http://localhost:8888/).
+
+> NOTICE: Sometimes after the new build of images Spring boot service struggles to connect to the database.
+> in this case please hit `Ctrl + C` and run `docker-compose up` command again.
