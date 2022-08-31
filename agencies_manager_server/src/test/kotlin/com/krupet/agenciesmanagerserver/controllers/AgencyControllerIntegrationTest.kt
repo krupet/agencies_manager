@@ -88,7 +88,7 @@ class AgencyControllerIntegrationTest {
         agencyRepository.saveAll(
             listOf(
                 Agency(
-                    id = id,
+                    uuid = id,
                     name = "Le Chamois",
                     country = "France",
                     countryCode = "FRA",

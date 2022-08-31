@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AgenciesService, AgencyDetails} from "./agencies.service";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder} from "@angular/forms";
+import {HttpClient} from "@angular/common/http";
+import { switchMap } from 'rxjs/operators';
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'agencies',
@@ -11,18 +13,22 @@ export class AgenciesComponent implements OnInit {
 
   title = "List of agencies"
   editForm: any;
-  agencies: AgencyDetails[];
+  agencies: AgencyDetails[] = [];
+  apiUrl = environment.apiUrl
 
   constructor(
-    private service: AgenciesService,
     private modalService: NgbModal,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private http: HttpClient
   ) {
-    this.agencies = service.getAgencies()
   }
 
   ngOnInit(): void {
+    this.http.get<Page>(`${this.apiUrl}/agencies`)
+      .subscribe(resp => this.agencies = resp.content)
+
     this.editForm = this.formBuilder.group({
+      uuid: [''],
       name: [''],
       country: [''],
       countryCode: [''],
@@ -60,15 +66,46 @@ export class AgenciesComponent implements OnInit {
   }
 
   onRemove(id: string) {
-    this.service.remove(id);
-    this.agencies = this.service.getAgencies()
+    // this.http.delete<any>(`${this.apiUrl}/agencies/${id}`)
+    //   .pipe(switchMap((v, i) =>  this.http.get<Page>("${this.apiUrl}/agencies")))
+    //   .subscribe(resp => this.agencies = resp.content)
+
+    this.http.delete<any>(`${this.apiUrl}/agencies/${id}`)
+      .subscribe((resp) => this.ngOnInit())
   }
 
   newAgencyAdded(event: any) {
-    this.agencies = this.service.getAgencies()
+    this.ngOnInit()
   }
 
   updateAgency() {
-    this.service.put(this.editForm.value)
+    this.http.put<any>(`${this.apiUrl}/agencies${this.editForm.value.uuid}`, this.editForm.value)
+      .subscribe((resp) => this.ngOnInit())
+  }
+}
+
+export class AgencyDetails {
+  constructor(
+    public uuid: string,
+    public name: string,
+    public country: string,
+    public countryCode: string,
+    public city: string,
+    public street: string,
+    public settlementCurrency: string,
+    public contactPerson: string) {
+  }
+}
+
+export class Page{
+
+  constructor(
+    public content: AgencyDetails[],
+    public totalPages: number,
+    public totalElements: number,
+    public size: number,
+    public number: number,
+    public numberOfElements: number
+  ) {
   }
 }

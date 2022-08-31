@@ -5,7 +5,7 @@ import java.util.*
 
 @Document
 data class Agency(
-    val id: UUID,
+    val uuid: UUID,
     val name: String,
     val country: String,
     val countryCode: String,

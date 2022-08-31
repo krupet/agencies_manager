@@ -16,7 +16,7 @@ class AgencyServiceImpl(private val agencyRepository: AgencyRepository) : Agency
         agencyRepository.save(agency)
 
     override fun delete(agencyId: UUID): UUID {
-        agencyRepository.deleteById(agencyId)
+        agencyRepository.deleteByUuid(agencyId)
         return agencyId
     }
 

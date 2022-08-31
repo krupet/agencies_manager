@@ -4,10 +4,19 @@ services:
     image: 'mongo:latest'
     environment:
       - MONGO_INITDB_DATABASE=agencies
-      - MONGO INITDB ROOT_USERNAME=mongo
-      - MONGO INITDB_ROOT_PASSWORD=mongo
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+    ports:
+      - "27017:27017"
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./mongo-volume:/data/db
+  server:
+    build: ../agencies_manager_server/
     ports:
-      - '27017-27019:27017-27019'
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:mongo@mongodb
+  ui:
+    build: ../agencies_manager_ui/
+    ports:
+      - "8888:80"
