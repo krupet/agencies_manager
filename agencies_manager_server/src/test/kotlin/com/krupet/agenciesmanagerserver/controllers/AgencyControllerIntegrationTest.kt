@@ -5,11 +5,16 @@ import com.krupet.agenciesmanagerserver.DATABASE_TEST_USER
 import com.krupet.agenciesmanagerserver.MONGODB_PORT
 import com.krupet.agenciesmanagerserver.model.Agency
 import com.krupet.agenciesmanagerserver.repositories.AgencyRepository
+import com.krupet.agenciesmanagerserver.testAgencies
+import com.krupet.agenciesmanagerserver.testAgency
+import com.krupet.agenciesmanagerserver.testAgencyId
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
-import java.util.UUID
+import io.restassured.filter.log.LogDetail
 import org.apache.http.HttpStatus
 import org.hamcrest.Matchers
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -21,7 +26,6 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.GenericContainer
-
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,6 +39,11 @@ class AgencyControllerIntegrationTest {
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        deleteAllAgencies()
     }
 
     companion object {
@@ -68,36 +77,129 @@ class AgencyControllerIntegrationTest {
         }
     }
 
-    private val id = UUID.randomUUID()
+    @Test
+    internal fun `add new agency`() {
+        assertEquals(0L, countsAgencies())
+
+        val payload = """
+            {
+              "name": "Le Chamois",
+              "country": "France",
+              "countryCode": "FRA",
+              "city": "Paris",
+              "street": "Rue Bonaparte 7",
+              "settlementCurrency": "EUR",
+              "contactPerson": "Madame Beaufort"
+            }
+        """.trimIndent()
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(payload)
+        .`when`()
+            .post("/agencies")
+        .then()
+            .statusCode(HttpStatus.SC_OK)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body("uuid", Matchers.notNullValue())
+            .body("name", Matchers.equalTo("Le Chamois"))
+            .body("country", Matchers.equalTo("France"))
+            .body("countryCode", Matchers.equalTo("FRA"))
+            .body("city", Matchers.equalTo("Paris"))
+            .body("street", Matchers.equalTo("Rue Bonaparte 7"))
+            .body("settlementCurrency", Matchers.equalTo("EUR"))
+            .body("contactPerson", Matchers.equalTo("Madame Beaufort"))
+
+        assertEquals(1L, countsAgencies())
+    }
 
     @Test
-    internal fun `get all records`() {
-        saveAgencies()
+    internal fun `update existing agency`() {
+        saveAgency(testAgency)
+        assertEquals(1L, countsAgencies())
+
+        val newName = "Le New Chamois"
+
+        val payload = """
+            {
+              "name": "$newName",
+              "country": "France",
+              "countryCode": "FRA",
+              "city": "Paris",
+              "street": "Rue Bonaparte 7",
+              "settlementCurrency": "EUR",
+              "contactPerson": "Madame Beaufort"
+            }
+        """.trimIndent()
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(payload)
+        .`when`()
+            .put("/agencies/{id}", testAgencyId)
+        .then()
+            .statusCode(HttpStatus.SC_OK)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body("uuid", Matchers.equalTo(testAgencyId.toString()))
+            .body("name", Matchers.equalTo(newName))
+            .body("country", Matchers.equalTo("France"))
+            .body("countryCode", Matchers.equalTo("FRA"))
+            .body("city", Matchers.equalTo("Paris"))
+            .body("street", Matchers.equalTo("Rue Bonaparte 7"))
+            .body("settlementCurrency", Matchers.equalTo("EUR"))
+            .body("contactPerson", Matchers.equalTo("Madame Beaufort"))
+
+        assertEquals(1L, countsAgencies())
+    }
+
+    @Test
+    internal fun `delete agency by id`() {
+        saveAgency(testAgency)
+        assertEquals(1L, countsAgencies())
 
         given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
         .`when`()
-            .get("/agencies")
+            .delete("/agencies/{id}", testAgencyId)
         .then()
             .statusCode(HttpStatus.SC_OK)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body("content.size()", Matchers.greaterThanOrEqualTo(1))
+            .body("deletedId", Matchers.equalTo(testAgencyId.toString()))
+
+        assertEquals(0, countsAgencies())
+    }
+
+    @Test
+    internal fun `get all records`() {
+        saveAgencies()
+        assertEquals(testAgencies.size.toLong(), countsAgencies())
+
+        val pagination = mapOf("page" to "0", "size" to "20")
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .queryParams(pagination)
+        .`when`()
+            .get("/agencies")
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.SC_OK)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                little hack with spread operator as hamcrest miss-match on list type
+            .body("content.name", Matchers.hasItems(*testAgencies.map { it.name }.toTypedArray()))
+    }
+
+    fun saveAgency(agency: Agency) {
+        agencyRepository.insert(agency)
     }
 
     fun saveAgencies() {
-        agencyRepository.saveAll(
-            listOf(
-                Agency(
-                    uuid = id,
-                    name = "Le Chamois",
-                    country = "France",
-                    countryCode = "FRA",
-                    city = "Paris",
-                    street = "Rue Bonaparte 7",
-                    settlementCurrency = "EUR",
-                    contactPerson = "Madame Beaufort"
-                )
-            )
-        )
+        agencyRepository.saveAll(testAgencies)
     }
+
+    fun deleteAllAgencies() {
+        agencyRepository.deleteAll()
+    }
+
+    fun countsAgencies(): Long = agencyRepository.count()
 }

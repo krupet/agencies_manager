@@ -12,14 +12,30 @@ class AgencyServiceImpl(private val agencyRepository: AgencyRepository) : Agency
     override fun create(agency: Agency): Agency =
         agencyRepository.insert(agency)
 
-    override fun update(agency: Agency): Agency =
-        agencyRepository.save(agency)
+    override fun update(agency: Agency): Agency {
+        return agencyRepository.findById(agency.uuid)
+            .map { it.copy(agency) }
+            .map { agencyRepository.save(it) }
+            .orElseThrow { RuntimeException("Cant find agency by id: {${agency.uuid}}") }
+    }
 
     override fun delete(agencyId: UUID): UUID {
-        agencyRepository.deleteByUuid(agencyId)
+        agencyRepository.deleteById(agencyId)
         return agencyId
     }
 
     override fun fetch(pageable: Pageable): Page<Agency> =
         agencyRepository.findAll(pageable)
 }
+
+fun Agency.copy(other: Agency): Agency =
+    this.copy(
+        uuid = other.uuid,
+        name = other.name,
+        country = other.country,
+        countryCode = other.countryCode,
+        city = other.city,
+        street = other.street,
+        settlementCurrency = other.settlementCurrency,
+        contactPerson = other.contactPerson,
+    )
