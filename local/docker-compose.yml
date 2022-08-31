@@ -16,6 +16,7 @@ services:
       - "8080:8080"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:mongo@mongodb
+      - ALLOWED_ORIGINS=http://localhost:4200
   ui:
     build: ../agencies_manager_ui/
     ports:

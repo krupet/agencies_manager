@@ -55,6 +55,7 @@ export class AgenciesComponent implements OnInit {
     });
 
     this.editForm.patchValue({
+      uuid: currentAgency.uuid,
       name: currentAgency.name,
       country: currentAgency.country,
       countryCode: currentAgency.countryCode,
@@ -79,7 +80,7 @@ export class AgenciesComponent implements OnInit {
   }
 
   updateAgency() {
-    this.http.put<any>(`${this.apiUrl}/agencies${this.editForm.value.uuid}`, this.editForm.value)
+    this.http.put<any>(`${this.apiUrl}/agencies/${this.editForm.value.uuid}`, this.editForm.value)
       .subscribe((resp) => this.ngOnInit())
   }
 }

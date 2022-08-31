@@ -3,3 +3,6 @@ spring:
     mongodb:
       database: agencies
       uri: mongodb://a:b@localhost:27017
+
+# comma separated list of allowed origins
+allowed-origins: http://localhost:4200
