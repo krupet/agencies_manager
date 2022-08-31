@@ -36,6 +36,8 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mongodb")
 	implementation("io.rest-assured:rest-assured")
+	implementation("javax.validation:validation-api")
+	implementation("org.hibernate.validator:hibernate-validator")
 }
 
 dependencyManagement {

@@ -4,6 +4,7 @@ import com.krupet.agenciesmanagerserver.DATABASE_NAME
 import com.krupet.agenciesmanagerserver.DATABASE_TEST_USER
 import com.krupet.agenciesmanagerserver.MONGODB_PORT
 import com.krupet.agenciesmanagerserver.model.Agency
+import com.krupet.agenciesmanagerserver.model.COUNTRY_CODE_LENGTH_VIOLATION_MESSAGE
 import com.krupet.agenciesmanagerserver.repositories.AgencyRepository
 import com.krupet.agenciesmanagerserver.testAgencies
 import com.krupet.agenciesmanagerserver.testAgency
@@ -11,6 +12,7 @@ import com.krupet.agenciesmanagerserver.testAgencyId
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.filter.log.LogDetail
+import java.util.UUID
 import org.apache.http.HttpStatus
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterEach
@@ -114,6 +116,69 @@ class AgencyControllerIntegrationTest {
     }
 
     @Test
+    internal fun `add new agency without required field and expect error message`() {
+        assertEquals(0L, countsAgencies())
+
+        val missingFieldName = "city"
+        val payload = """
+            {
+              "name": "Le Chamois",
+              "country": "France",
+              "countryCode": "FRA",
+              "street": "Rue Bonaparte 7",
+              "settlementCurrency": "EUR",
+              "contactPerson": "Madame Beaufort"
+            }
+        """.trimIndent()
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(payload)
+        .`when`()
+            .post("/agencies")
+        .then()
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body("path", Matchers.equalTo("/agencies"))
+            .body("message", Matchers.equalTo("JSON property $missingFieldName missing"))
+
+        assertEquals(0L, countsAgencies())
+    }
+
+    @Test
+    internal fun `add new agency with invalid field value and expect error message`() {
+        assertEquals(0L, countsAgencies())
+
+        val invalidCountryCodeValue = "FRAAAA"
+
+        val payload = """
+            {
+              "name": "Le Chamois",
+              "country": "France",
+              "countryCode": "$invalidCountryCodeValue",
+              "city": "Paris",
+              "street": "Rue Bonaparte 7",
+              "settlementCurrency": "EUR",
+              "contactPerson": "Madame Beaufort"
+            }
+        """.trimIndent()
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(payload)
+        .`when`()
+            .post("/agencies")
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body("path", Matchers.equalTo("/agencies"))
+            .body("message", Matchers.equalTo(COUNTRY_CODE_LENGTH_VIOLATION_MESSAGE))
+
+        assertEquals(0L, countsAgencies())
+    }
+
+    @Test
     internal fun `update existing agency`() {
         saveAgency(testAgency)
         assertEquals(1L, countsAgencies())
@@ -153,6 +218,42 @@ class AgencyControllerIntegrationTest {
     }
 
     @Test
+    internal fun `update non existing agency and expect error message`() {
+        saveAgency(testAgency)
+        assertEquals(1L, countsAgencies())
+
+        val newName = "Le New Chamois"
+
+        val payload = """
+            {
+              "name": "$newName",
+              "country": "France",
+              "countryCode": "FRA",
+              "city": "Paris",
+              "street": "Rue Bonaparte 7",
+              "settlementCurrency": "EUR",
+              "contactPerson": "Madame Beaufort"
+            }
+        """.trimIndent()
+
+        val unknownUUID = UUID.randomUUID()
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(payload)
+        .`when`()
+            .put("/agencies/{id}", unknownUUID)
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body("path", Matchers.equalTo("/agencies/$unknownUUID"))
+            .body("message", Matchers.equalTo("Cant find agency by id: {$unknownUUID}"))
+
+        assertEquals(1L, countsAgencies())
+    }
+
+    @Test
     internal fun `delete agency by id`() {
         saveAgency(testAgency)
         assertEquals(1L, countsAgencies())
@@ -167,6 +268,27 @@ class AgencyControllerIntegrationTest {
             .body("deletedId", Matchers.equalTo(testAgencyId.toString()))
 
         assertEquals(0, countsAgencies())
+    }
+
+    @Test
+    internal fun `delete non existing agency and expect error message`() {
+        saveAgency(testAgency)
+        assertEquals(1L, countsAgencies())
+
+        val unknownUUID = UUID.randomUUID()
+
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .`when`()
+            .delete("/agencies/{id}", unknownUUID)
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body("path", Matchers.equalTo("/agencies/$unknownUUID"))
+            .body("message", Matchers.equalTo("Cant find agency by id: {$unknownUUID}"))
+
+        assertEquals(1L, countsAgencies())
     }
 
     @Test
