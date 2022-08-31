@@ -1,11 +1,12 @@
 package com.krupet.agenciesmanagerserver.model
 
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import java.util.*
 
 @Document
 data class Agency(
-    val uuid: UUID,
+    @Id
+    val id: String? = null,
     val name: String,
     val country: String,
     val countryCode: String,

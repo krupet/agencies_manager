@@ -28,7 +28,7 @@ export class AgenciesComponent implements OnInit {
       .subscribe(resp => this.agencies = resp.content)
 
     this.editForm = this.formBuilder.group({
-      uuid: [''],
+      id: [''],
       name: [''],
       country: [''],
       countryCode: [''],
@@ -55,6 +55,7 @@ export class AgenciesComponent implements OnInit {
     });
 
     this.editForm.patchValue({
+      id: currentAgency.id,
       name: currentAgency.name,
       country: currentAgency.country,
       countryCode: currentAgency.countryCode,
@@ -79,14 +80,14 @@ export class AgenciesComponent implements OnInit {
   }
 
   updateAgency() {
-    this.http.put<any>(`${this.apiUrl}/agencies${this.editForm.value.uuid}`, this.editForm.value)
+    this.http.put<any>(`${this.apiUrl}/agencies/${this.editForm.value.id}`, this.editForm.value)
       .subscribe((resp) => this.ngOnInit())
   }
 }
 
 export class AgencyDetails {
   constructor(
-    public uuid: string,
+    public id: string,
     public name: string,
     public country: string,
     public countryCode: string,
